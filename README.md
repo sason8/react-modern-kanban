@@ -1,4 +1,4 @@
-﻿# âś¨ Modern React Kanban
+# âś¨ Modern React Kanban
 
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-5.1-646CFF?style=for-the-badge&logo=vite)

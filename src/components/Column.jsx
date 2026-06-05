@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import Task from './Task';
 
 export default function Column({ id, title, tasks, addTask, moveTask }) {

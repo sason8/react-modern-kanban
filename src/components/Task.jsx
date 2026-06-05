@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 export default function Task({ task, currentColumn, moveTask }) {
   return (
