@@ -1,34 +1,98 @@
 import React, { useState } from 'react';
 import Task from './Task';
 
-export default function Column({ id, title, tasks, addTask, moveTask }) {
-  const [newTaskContent, setNewTaskContent] = useState('');
+export default function Column({ 
+  column, 
+  tasks, 
+  onAddTaskClick, 
+  onEditTask, 
+  onDeleteTask, 
+  onRenameColumn, 
+  onDeleteColumn, 
+  onMoveTask 
+}) {
+  const [isDragOver, setIsDragOver] = useState(false);
 
-  const handleAdd = (e) => {
+  const handleDragOver = (e) => {
     e.preventDefault();
-    if (newTaskContent.trim()) {
-      addTask(id, newTaskContent.trim());
-      setNewTaskContent('');
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    try {
+      const dataStr = e.dataTransfer.getData('text/plain');
+      if (!dataStr) return;
+      const { taskId, sourceCol } = JSON.parse(dataStr);
+      if (sourceCol !== column.id) {
+        onMoveTask(taskId, sourceCol, column.id);
+      }
+    } catch (err) {
+      console.error("Failed to handle drop", err);
     }
   };
 
   return (
-    <div className="column">
-      <h2>{title} <span>{tasks.length}</span></h2>
-      <div className="task-list">
-        {tasks.map(task => (
-          <Task key={task.id} task={task} currentColumn={id} moveTask={moveTask} />
-        ))}
+    <div 
+      className={`column ${isDragOver ? 'drag-over' : ''}`}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div className="column-header">
+        <div className="column-title-container">
+          <input 
+            type="text" 
+            className="column-title-input" 
+            value={column.title} 
+            onChange={(e) => onRenameColumn(column.id, e.target.value)}
+            title="Click to rename column"
+          />
+          <span className="task-counter">{tasks.length}</span>
+        </div>
+        
+        <div className="column-actions">
+          <button 
+            className="column-btn delete" 
+            onClick={() => onDeleteColumn(column.id)}
+            title="Delete column"
+          >
+            &times;
+          </button>
+        </div>
       </div>
-      <form onSubmit={handleAdd} className="add-task-form">
-        <input 
-          type="text" 
-          placeholder="Add new task..." 
-          value={newTaskContent}
-          onChange={(e) => setNewTaskContent(e.target.value)}
-        />
-        <button type="submit">+</button>
-      </form>
+
+      <div className="task-list">
+        {tasks.length === 0 ? (
+          <div className="empty-state">
+            Drag tasks here
+          </div>
+        ) : (
+          tasks.map(task => (
+            <Task 
+              key={task.id} 
+              task={task} 
+              columnId={column.id} 
+              onEditTask={onEditTask} 
+              onDeleteTask={onDeleteTask}
+            />
+          ))
+        )}
+      </div>
+
+      <button className="add-task-btn" onClick={() => onAddTaskClick(column.id)}>
+        <span>+</span> Add Task
+      </button>
     </div>
   );
 }
