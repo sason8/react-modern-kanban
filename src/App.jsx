@@ -39,7 +39,7 @@ export default function App() {
   return (
     <div className="app-container">
       <header>
-        <h1>âś¨ Modern Kanban</h1>
+        <h1>✨ Modern Kanban</h1>
         <p>Organize your work with premium style.</p>
       </header>
       <main className="board">
